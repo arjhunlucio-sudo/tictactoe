@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tic</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+</head>
+
+<body class="flex justify-center min-h-screen items-center bg-gradient-to-b
+from-[#44403c]
+via-[#78716c]
+to-[#d6d3d1]">
+    <div id="app">
+        <div class="text-center">
+            <h1 class="text-6xl font-bold border-8 bg-white border-black rounded-md shadow-xl shadow-black"> <span
+                    class="text-red-700">TIC:</span>TAC:<span class="text-red-700">TOE!</span></h1>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+            <div v-for="(row, rowIndex) in boardCells">
+                <div v-for="(cell, colIndex) in row"
+                    class="w-38 h-35 bg-white mt-3 flex justify-center rounded-md items-center border-8 border-black hover:bg-zinc-500 cursor-pointer"
+                    @click="clickedCells(rowIndex,colIndex)"
+                    :class="{'text-black text-8xl font-bold':cell === 'X','text-red-700 text-8xl font-bold':cell ==='O'}">
+                    {{cell}}
+                </div>
+            </div>
+        </div>
+        <div class="flex gap-1">
+            <h1 class="text-5xl text-red-600 flex justify-center border-red-600 rounded-md border-7 mt-3 font-bold w-85">{{message}}</h1>
+            <button @click="resetbtn"
+                class="text-5xl text-black border-7 border-red-600 text-red-600 font-bold w-40 mt-3 rounded-md cursor-pointer hover:bg-zinc-500 text-center">RESET</button>
+        </div>
+    </div>
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    boardCells:
+                        [
+                            ["", "", ""],
+                            ["", "", ""],
+                            ["", "", ""]
+                        ],
+                    currentPlayer: "X",
+                    message: "LET'S GO"
+                }
+            },
+            methods: {
+                clickedCells(rowIndex, colIndex) {
+                    if (this.boardCells[rowIndex][colIndex] === "") {
+                        this.boardCells[rowIndex][colIndex] = this.currentPlayer;
+                        if (this.isWinner(this.currentPlayer)) {
+                            this.message = `Player  ${this.currentPlayer} wins!`
+                        } else if(this.isDraw){
+                            this.message ="It's a Draw"
+                            // setTimeout(this.resetGame,1500);
+                        }
+                         else {
+                            this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
+                            this.message = `Player ${this.currentPlayer} turn!`
+                        }
+                    }
+                },
+                isWinner(player) {
+                    const board = this.boardCells;
+
+                    for (let i = 0; i < 3; i++) {
+                        if (board[i][0] === player && board[i][1] === player && board[i][2] === player) return true;
+                        if (board[0][i] === player && board[1][i] === player && board[2][i] === player) return true;
+                    }
+                    if (board[0][0] === player && board[1][1] === player && board[2][2] === player) return true;
+                    if (board[0][2] === player && board[1][1] === player && board[2][0] === player) return true;
+
+                },
+                resetbtn() {
+                     this.boardCells =
+                        [
+                            ["", "", ""],
+                            ["", "", ""],
+                            ["", "", ""]
+                        ],
+                    this.currentPlayer = "X",
+                    this.message = "Lets's Go"
+                },
+                isDraw(){
+                    let allclicked = false;
+                    for(let row of this.boardCells){
+                        for(let cell of row ){
+                            if(cell === ""){
+                                allclicked = true;
+                            }
+                        }
+                    }
+                    if(!allclicked && !this.isWinner("X") && !this.isWinner("0")){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                },
+            }
+        }).mount("#app");
+    </script>
+</body>
+
+</html>
